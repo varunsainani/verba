@@ -42,6 +42,7 @@ function Answer({
                 key={i}
                 type="button"
                 onClick={() => onOpen(cit)}
+                aria-label={cit.docTitle}
                 className="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-brand-100 px-1 align-super text-[10px] font-semibold text-brand-700 dark:bg-brand-600/30 dark:text-brand-200"
               >
                 {m[1]}
@@ -234,12 +235,14 @@ export function WidgetChat({ token, locale }: { token: string; locale: string })
           value={input}
           onChange={(ev) => setInput(ev.target.value)}
           placeholder={t("placeholder")}
+          aria-label={t("placeholder")}
           disabled={sending}
           className="h-9 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
         />
         <button
           type="submit"
           disabled={sending || !input.trim()}
+          aria-label={t("send")}
           className={cn(
             "inline-flex h-9 w-9 items-center justify-center rounded-lg text-white disabled:opacity-50",
             a.solid,

@@ -185,6 +185,7 @@ export default function DashboardPage() {
                   type="button"
                   onClick={() => onDelete(kb.id)}
                   title={c("delete")}
+                  aria-label={c("delete")}
                   className="absolute right-3 top-3 rounded-md p-1.5 text-slate-300 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 dark:text-slate-600 dark:hover:bg-red-950/40"
                 >
                   <Trash2 className="h-4 w-4" />

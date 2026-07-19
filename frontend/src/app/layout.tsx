@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata: Metadata = {
-  title: "Verba - Chat with your documents",
-  description:
-    "Upload your documents and get answers grounded in them, with real citations. Add an AI chat widget to your website in one line.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations();
+  return {
+    title: `Verba - ${t("common.tagline")}`,
+    description: t("landing.heroSubtitle"),
+  };
+}
 
 export default async function RootLayout({
   children,

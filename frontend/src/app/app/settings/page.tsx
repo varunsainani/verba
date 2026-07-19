@@ -42,6 +42,7 @@ function UsageBar({
 export default function AccountPage() {
   const t = useTranslations("account");
   const c = useTranslations("common");
+  const e = useTranslations("errors");
   const currentLocale = useLocale();
   const { user, updateProfile } = useAuth();
 
@@ -49,14 +50,16 @@ export default function AccountPage() {
   const [locale, setLocale] = useState(currentLocale);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const [usage, setUsage] = useState<Usage | null>(null);
+  const [usageError, setUsageError] = useState(false);
 
   const loadUsage = useCallback(async () => {
     try {
       const data = await api.get<Usage>("/kbs/usage/today");
       setUsage(data);
     } catch {
-      /* non-fatal */
+      setUsageError(true);
     }
   }, []);
 
@@ -70,6 +73,7 @@ export default function AccountPage() {
 
   async function save() {
     setSaving(true);
+    setError("");
     try {
       await updateProfile({ name, locale });
       if (locale !== currentLocale) {
@@ -79,6 +83,8 @@ export default function AccountPage() {
       }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+    } catch {
+      setError(e("generic"));
     } finally {
       setSaving(false);
     }
@@ -117,6 +123,9 @@ export default function AccountPage() {
           {saved && (
             <p className="text-sm text-emerald-600 dark:text-emerald-400">{t("saved")}</p>
           )}
+          {error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          )}
           <Button onClick={save} loading={saving}>
             {t("save")}
           </Button>
@@ -143,6 +152,8 @@ export default function AccountPage() {
               cap={usage.ingestCap}
             />
           </div>
+        ) : usageError ? (
+          <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">{e("generic")}</p>
         ) : (
           <div className="flex py-6 justify-center">
             <Spinner className="h-5 w-5" />

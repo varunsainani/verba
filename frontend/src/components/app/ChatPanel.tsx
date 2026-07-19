@@ -37,6 +37,7 @@ function AnswerText({
                 key={i}
                 type="button"
                 onClick={() => onOpen(cit)}
+                aria-label={cit.docTitle}
                 className="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-brand-100 px-1 align-super text-[10px] font-semibold text-brand-700 hover:bg-brand-200 dark:bg-brand-600/30 dark:text-brand-200"
               >
                 {n}
@@ -53,6 +54,7 @@ function AnswerText({
 export function ChatPanel({ kb }: { kb: KbDetail }) {
   const t = useTranslations("chat");
   const e = useTranslations("errors");
+  const c = useTranslations("common");
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -70,6 +72,7 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
     const q = question.trim();
     if (!q || sending) return;
     setError("");
+    setActive(null);
     setInput("");
     setMessages((m) => [
       ...m,
@@ -243,10 +246,11 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
             value={input}
             onChange={(ev) => setInput(ev.target.value)}
             placeholder={t("placeholder")}
+            aria-label={t("placeholder")}
             disabled={sending}
             className="h-10 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           />
-          <Button type="submit" loading={sending} disabled={!input.trim()}>
+          <Button type="submit" loading={sending} disabled={!input.trim()} aria-label={t("send")}>
             <Send className="h-4 w-4" />
             <span className="hidden sm:inline">{t("send")}</span>
           </Button>
@@ -268,6 +272,7 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
               <button
                 type="button"
                 onClick={() => setActive(null)}
+                aria-label={c("close")}
                 className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
                 <X className="h-5 w-5" />

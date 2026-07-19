@@ -36,10 +36,12 @@ export function DocumentsPanel({
 }) {
   const t = useTranslations("documents");
   const e = useTranslations("errors");
+  const c = useTranslations("common");
   const locale = useLocale();
 
   const [docs, setDocs] = useState<DocItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const [mode, setMode] = useState<Mode>("file");
   const [file, setFile] = useState<File | null>(null);
@@ -51,9 +53,13 @@ export function DocumentsPanel({
   const fileInput = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
+    setLoading(true);
+    setLoadError(false);
     try {
       const data = await api.get<{ documents: DocItem[] }>(`/kbs/${kbId}/documents`);
       setDocs(data.documents);
+    } catch {
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
@@ -234,6 +240,13 @@ export function DocumentsPanel({
           <div className="flex justify-center py-16">
             <Spinner className="h-6 w-6" />
           </div>
+        ) : loadError ? (
+          <Card className="flex flex-col items-center px-6 py-14 text-center">
+            <p className="text-sm text-slate-500 dark:text-slate-400">{e("generic")}</p>
+            <Button className="mt-4" variant="secondary" size="sm" onClick={load}>
+              {c("retry")}
+            </Button>
+          </Card>
         ) : docs.length === 0 ? (
           <Card className="flex flex-col items-center px-6 py-14 text-center">
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-400 dark:bg-slate-800">
@@ -276,6 +289,7 @@ export function DocumentsPanel({
                 <button
                   type="button"
                   onClick={() => remove(d.id)}
+                  aria-label={c("delete")}
                   className="rounded-md p-1.5 text-slate-300 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-600 dark:hover:bg-red-950/40"
                 >
                   <Trash2 className="h-4 w-4" />
