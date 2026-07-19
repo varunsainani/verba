@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /$
+Allow: /login
+Allow: /register
+Disallow: /app
+Disallow: /widget
+
+Sitemap: https://verba-mocha.vercel.app/sitemap.xml
