@@ -9,9 +9,25 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations();
+  const title = `Verba - ${t("common.tagline")}`;
+  const description = t("landing.heroSubtitle");
   return {
-    title: `Verba - ${t("common.tagline")}`,
-    description: t("landing.heroSubtitle"),
+    metadataBase: new URL("https://verba-mocha.vercel.app"),
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      siteName: "Verba",
+      type: "website",
+      images: [{ url: "/og.png", width: 1200, height: 630, alt: "Verba" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og.png"],
+    },
   };
 }
 
