@@ -232,5 +232,10 @@
     "required": "Este campo é obrigatório",
     "invalidEmail": "Insira um e-mail válido",
     "passwordShort": "A senha deve ter pelo menos 6 caracteres"
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "body": "A página que você procura não existe ou foi movida.",
+    "home": "Voltar ao início"
   }
 }
