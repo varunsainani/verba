@@ -1,7 +1,6 @@
 import * as cheerio from "cheerio";
 import dns from "dns";
 import net from "net";
-import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import mammoth from "mammoth";
 import { SourceType } from "@prisma/client";
 import { AppError } from "../utils/http";
@@ -40,8 +39,11 @@ export async function parseFileBuffer(
   sourceType: SourceType,
 ): Promise<string> {
   if (sourceType === "PDF") {
-    const out = await pdfParse(buffer);
-    return cleanText(out.text);
+    // unpdf ships a serverless-friendly pdf.js build (no native deps, no worker).
+    const { extractText, getDocumentProxy } = await import("unpdf");
+    const pdf = await getDocumentProxy(new Uint8Array(buffer));
+    const { text } = await extractText(pdf, { mergePages: true });
+    return cleanText(text);
   }
   if (sourceType === "DOCX") {
     const out = await mammoth.extractRawText({ buffer });
