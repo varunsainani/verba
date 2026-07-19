@@ -7,6 +7,18 @@ you can drop on any website in one line.
 
 Available in English, Spanish, and Portuguese.
 
+## Screenshots
+
+![Landing page](screenshots/en-dark/01-landing.png)
+
+Grounded answers with real citations and a source panel:
+
+![Chat with citations](screenshots/en-dark/05-chat.png)
+
+The embeddable website widget, live on any site:
+
+![Embeddable widget](screenshots/en-dark/08-widget.png)
+
 ## How it works
 
 1. **Ingest** - documents are parsed, split into overlapping passages, and embedded into a
