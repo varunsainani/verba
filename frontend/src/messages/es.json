@@ -167,6 +167,7 @@
     "suggested3": "¿Qué debería saber primero?",
     "newChat": "Nuevo chat",
     "history": "Historial",
+    "noHistory": "Aún no hay conversaciones",
     "noDocsTitle": "Agrega un documento primero",
     "noDocsBody": "Esta base de conocimiento aún no tiene documentos listos. Agrega uno para empezar a chatear.",
     "fromDocument": "de {title}",

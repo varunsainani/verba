@@ -167,6 +167,7 @@
     "suggested3": "What should I know first?",
     "newChat": "New chat",
     "history": "History",
+    "noHistory": "No conversations yet",
     "noDocsTitle": "Add a document first",
     "noDocsBody": "This knowledge base has no ready documents yet. Add one to start chatting.",
     "fromDocument": "from {title}",
