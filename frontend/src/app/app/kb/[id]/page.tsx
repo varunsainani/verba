@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, FileText, MessageSquare, Settings2 } from "lucide-react";
@@ -25,6 +25,7 @@ export default function KbPage() {
   const [kb, setKb] = useState<KbDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
+  const loadedRef = useRef(false);
 
   const load = useCallback(async () => {
     try {
@@ -32,8 +33,11 @@ export default function KbPage() {
         `/kbs/${id}`,
       );
       setKb(knowledgeBase);
+      loadedRef.current = true;
     } catch {
-      setMissing(true);
+      // Only treat as "not found" on the first load; a transient failure while
+      // refreshing counts (e.g. after adding a document) must not blank the page.
+      if (!loadedRef.current) setMissing(true);
     } finally {
       setLoading(false);
     }
