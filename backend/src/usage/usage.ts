@@ -7,31 +7,36 @@ export function todayUTC(): string {
 
 type Field = "queryCount" | "ingestCount";
 
-// Check a daily cap and increment it. Best-effort under concurrency (serverless),
-// which is acceptable for protecting a free quota. Checked BEFORE any LLM call.
+// Check a daily cap and increment it atomically. The single conditional UPDATE
+// (increment only while below the cap) closes the check-then-increment race so a
+// burst cannot overshoot the free quota. Checked BEFORE any LLM/embedding call.
 export async function consumeQuota(
   userId: string,
   field: Field,
   cap: number,
 ): Promise<void> {
   const date = todayUTC();
-  const row = await prisma.usageDaily.upsert({
+  // Ensure the row exists so the conditional UPDATE has something to match.
+  await prisma.usageDaily.upsert({
     where: { userId_date: { userId, date } },
     create: { userId, date },
     update: {},
   });
-  const used = field === "queryCount" ? row.queryCount : row.ingestCount;
-  if (used >= cap) {
+  const col = field === "queryCount" ? "queryCount" : "ingestCount";
+  const updated = await prisma.$executeRawUnsafe(
+    `UPDATE "UsageDaily" SET "${col}" = "${col}" + 1
+       WHERE "userId" = $1 AND date = $2 AND "${col}" < $3`,
+    userId,
+    date,
+    cap,
+  );
+  if (updated === 0) {
     throw new AppError(
       429,
       field === "queryCount" ? "errors.queryQuota" : "errors.ingestQuota",
       { cap },
     );
   }
-  await prisma.usageDaily.update({
-    where: { userId_date: { userId, date } },
-    data: { [field]: { increment: 1 } },
-  });
 }
 
 export async function getUsage(userId: string) {

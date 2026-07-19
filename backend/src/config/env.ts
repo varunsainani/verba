@@ -28,8 +28,11 @@ export const env = {
 
   databaseUrl: req("DATABASE_URL"),
 
-  jwtAccessSecret: req("JWT_ACCESS_SECRET", "dev-access-secret"),
-  jwtRefreshSecret: req("JWT_REFRESH_SECRET", "dev-refresh-secret"),
+  // No fallback: fail closed. A missing secret in dev throws at boot; in prod it
+  // resolves to "" so jwt sign/verify throws (auth denied) rather than signing
+  // with a public constant.
+  jwtAccessSecret: req("JWT_ACCESS_SECRET"),
+  jwtRefreshSecret: req("JWT_REFRESH_SECRET"),
   accessTokenTtl: process.env.ACCESS_TOKEN_TTL ?? "15m",
   refreshTokenTtlDays: int("REFRESH_TOKEN_TTL_DAYS", 30),
 

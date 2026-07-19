@@ -28,9 +28,6 @@ const en: Dict = {
   "errors.badUrl": "That URL could not be fetched.",
   "chat.noAnswer":
     "I could not find an answer to that in these documents.",
-  "demo.kbHandbookName": "Product Handbook",
-  "demo.kbHrName": "HR Policies",
-  "demo.kbFaqName": "Support FAQ",
 };
 
 const es: Dict = {
@@ -57,9 +54,6 @@ const es: Dict = {
   "errors.llmUnavailable": "El asistente no esta disponible por ahora. Intentalo de nuevo.",
   "errors.badUrl": "No se pudo acceder a esa URL.",
   "chat.noAnswer": "No encontre una respuesta a eso en estos documentos.",
-  "demo.kbHandbookName": "Manual del Producto",
-  "demo.kbHrName": "Politicas de RR. HH.",
-  "demo.kbFaqName": "Preguntas Frecuentes",
 };
 
 const pt: Dict = {
@@ -86,9 +80,6 @@ const pt: Dict = {
   "errors.llmUnavailable": "O assistente esta indisponivel no momento. Tente novamente.",
   "errors.badUrl": "Nao foi possivel acessar essa URL.",
   "chat.noAnswer": "Nao encontrei uma resposta para isso nestes documentos.",
-  "demo.kbHandbookName": "Manual do Produto",
-  "demo.kbHrName": "Politicas de RH",
-  "demo.kbFaqName": "Perguntas Frequentes",
 };
 
 const catalogs: Record<Locale, Dict> = { en, es, pt };

@@ -1,19 +1,8 @@
 import { env } from "../config/env";
+import { withRetry } from "../utils/retry";
 import { EmbeddingProvider, EmbedTaskType, LLMProvider, normalize } from "./types";
 
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
-
-async function withRetry<T>(fn: () => Promise<T>, retries = 1): Promise<T> {
-  try {
-    return await fn();
-  } catch (e) {
-    if (retries > 0) {
-      await new Promise((r) => setTimeout(r, 400));
-      return withRetry(fn, retries - 1);
-    }
-    throw e;
-  }
-}
 
 export const geminiLLM: LLMProvider = {
   name: "gemini",
@@ -40,7 +29,8 @@ export const geminiLLM: LLMProvider = {
       const data = (await res.json()) as {
         candidates?: { content?: { parts?: { text?: string }[] } }[];
       };
-      const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+      const text =
+        data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
       return text.trim();
     });
   },
@@ -74,7 +64,17 @@ async function embedBatchCall(
   }
   const data = (await res.json()) as { embeddings?: { values: number[] }[] };
   const out = data.embeddings ?? [];
-  return out.map((e) => normalize(e.values));
+  // Positional response: a short array would misalign vectors with chunks.
+  if (out.length !== texts.length) {
+    throw new Error(`gemini embed count mismatch: ${out.length} != ${texts.length}`);
+  }
+  return out.map((e) => {
+    const values = e.values ?? [];
+    if (values.length !== env.embedDim || values.some((v) => !Number.isFinite(v))) {
+      throw new Error("gemini embed returned an invalid vector");
+    }
+    return normalize(values);
+  });
 }
 
 export const geminiEmbeddings: EmbeddingProvider = {
