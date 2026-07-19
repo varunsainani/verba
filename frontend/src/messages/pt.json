@@ -221,6 +221,7 @@
     "thinking": "Pensando...",
     "sources": "Fontes",
     "welcome": "Olá! Pergunte-me qualquer coisa sobre {name}.",
+    "unavailable": "Este assistente não está disponível no momento.",
     "poweredBy": "Fornecido por Verba"
   },
   "errors": {

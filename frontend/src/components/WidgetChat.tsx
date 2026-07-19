@@ -137,7 +137,7 @@ export function WidgetChat({ token, locale }: { token: string; locale: string })
   if (status === "unavailable" || !config) {
     return (
       <div className="flex h-full items-center justify-center bg-white p-6 text-center text-sm text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-        {t("welcome", { name: "" })}
+        {t("unavailable")}
       </div>
     );
   }

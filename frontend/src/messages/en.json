@@ -221,6 +221,7 @@
     "thinking": "Thinking...",
     "sources": "Sources",
     "welcome": "Hi! Ask me anything about {name}.",
+    "unavailable": "This assistant is not available right now.",
     "poweredBy": "Powered by Verba"
   },
   "errors": {
