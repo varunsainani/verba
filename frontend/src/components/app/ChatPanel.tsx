@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
-import { Send, FileText, X, Sparkles, Plus, RefreshCw } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Send, FileText, X, Sparkles, Plus, History } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
-import { ChatResponse, Citation, KbDetail } from "@/lib/types";
+import { ChatResponse, Citation, KbDetail, MessageItem, SessionItem } from "@/lib/types";
+import { formatDate } from "@/lib/format";
 import { Button, cn } from "@/components/ui";
 
 interface ChatMessage {
@@ -55,6 +56,7 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
   const t = useTranslations("chat");
   const e = useTranslations("errors");
   const c = useTranslations("common");
+  const locale = useLocale();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -62,7 +64,44 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [active, setActive] = useState<Citation | null>(null);
   const [error, setError] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
+  const [sessions, setSessions] = useState<SessionItem[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
+
+  async function toggleHistory() {
+    const next = !showHistory;
+    setShowHistory(next);
+    if (next) {
+      try {
+        const data = await api.get<{ sessions: SessionItem[] }>(
+          `/kbs/${kb.id}/sessions`,
+        );
+        setSessions(data.sessions);
+      } catch {
+        /* non-fatal */
+      }
+    }
+  }
+
+  async function openSession(sid: string) {
+    setShowHistory(false);
+    try {
+      const data = await api.get<{ messages: MessageItem[] }>(
+        `/kbs/${kb.id}/sessions/${sid}/messages`,
+      );
+      setMessages(
+        data.messages.map((m) => ({
+          role: m.role,
+          content: m.content,
+          citations: m.citations ?? undefined,
+        })),
+      );
+      setSessionId(sid);
+      setActive(null);
+    } catch {
+      setError(e("generic"));
+    }
+  }
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -138,12 +177,51 @@ export function ChatPanel({ kb }: { kb: KbDetail }) {
           <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
             {kb.name}
           </span>
-          {!empty && (
-            <Button size="sm" variant="ghost" onClick={reset}>
-              <Plus className="h-4 w-4" />
-              {t("newChat")}
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            <div className="relative">
+              <Button size="sm" variant="ghost" onClick={toggleHistory}>
+                <History className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("history")}</span>
+              </Button>
+              {showHistory && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowHistory(false)}
+                  />
+                  <div className="scroll-thin absolute right-0 z-20 mt-1 max-h-72 w-72 overflow-y-auto rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900">
+                    {sessions.length === 0 ? (
+                      <p className="px-3 py-2 text-sm text-slate-400">
+                        {t("noHistory")}
+                      </p>
+                    ) : (
+                      sessions.map((s) => (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => openSession(s.id)}
+                          className="block w-full rounded-md px-3 py-1.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800"
+                        >
+                          <span className="block truncate text-sm text-slate-700 dark:text-slate-200">
+                            {s.title}
+                          </span>
+                          <span className="block text-xs text-slate-400">
+                            {formatDate(s.updatedAt, locale)}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            {!empty && (
+              <Button size="sm" variant="ghost" onClick={reset}>
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">{t("newChat")}</span>
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="scroll-thin flex-1 space-y-4 overflow-y-auto px-4 py-5">
