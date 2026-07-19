@@ -9,15 +9,15 @@ Available in English, Spanish, and Portuguese.
 
 ## Screenshots
 
-![Landing page](screenshots/en-dark/01-landing.png)
+![Landing page](screenshots/upwork/01-landing.png)
 
 Grounded answers with real citations and a source panel:
 
-![Chat with citations](screenshots/en-dark/05-chat.png)
+![Chat with citations](screenshots/upwork/05-chat.png)
 
 The embeddable website widget, live on any site:
 
-![Embeddable widget](screenshots/en-dark/08-widget.png)
+![Embeddable widget](screenshots/upwork/07-widget.png)
 
 ## How it works
 
