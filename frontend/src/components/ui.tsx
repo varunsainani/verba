@@ -1,11 +1,15 @@
 "use client";
 
 import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { Loader2 } from "lucide-react";
 import { forwardRef } from "react";
 
+// twMerge resolves conflicting Tailwind utilities so a className passed to a
+// component reliably overrides the component's own variant classes (e.g. a white
+// CTA button's text color beats the variant's text-white).
 export function cn(...inputs: ClassValue[]): string {
-  return clsx(inputs);
+  return twMerge(clsx(inputs));
 }
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
