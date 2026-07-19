@@ -47,7 +47,7 @@ The embeddable website widget, live on any site:
 | Backend    | Express, TypeScript, Prisma |
 | Database   | PostgreSQL with the pgvector extension |
 | Embeddings | Gemini `gemini-embedding-001` (768 dims), behind a provider interface |
-| Generation | Gemini `gemini-flash-latest`, switchable to Groq or Claude |
+| Generation | Groq `llama-3.3-70b-versatile` (Gemini and Claude also supported, one env var to switch) |
 | Hosting    | Vercel (frontend and backend), Neon Postgres |
 
 The browser only talks to the frontend origin; `/api/*` is proxied to the backend, so the
