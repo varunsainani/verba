@@ -101,7 +101,7 @@ export default function LandingPage() {
           <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-brand-50/70 to-transparent dark:from-brand-950/40" />
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:py-24">
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-white px-3.5 py-1.5 text-xs font-semibold leading-5 text-brand-700 shadow-sm dark:border-brand-800 dark:bg-brand-950/60 dark:text-brand-200">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-200 bg-white px-3.5 py-1.5 text-xs font-semibold leading-5 text-brand-700 shadow-sm dark:border-brand-700 dark:bg-brand-900 dark:text-brand-100">
                 <Sparkles className="h-3.5 w-3.5 shrink-0" />
                 {t("heroBadge")}
               </span>
