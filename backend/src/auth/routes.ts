@@ -1,13 +1,27 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "../db/prisma";
 import { env, LOCALES } from "../config/env";
+import { t } from "../i18n/messages";
 import { AppError, asyncHandler } from "../utils/http";
 import { requireAuth } from "../middleware/auth";
 import { issueRefreshToken, rotateRefreshToken, revokeRefreshToken, signAccessToken } from "./tokens";
 
 export const authRouter = Router();
+
+// Throttle credential endpoints against brute-force and mass account creation.
+// In-memory (best-effort per serverless instance), same approach as the widget.
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({ error: t(req.locale, "errors.rateLimited") });
+  },
+});
 
 type PublicUser = {
   id: string;
@@ -47,6 +61,7 @@ async function sessionResponse(userId: string, role: "USER" | "ADMIN") {
 
 authRouter.post(
   "/register",
+  authLimiter,
   asyncHandler(async (req, res) => {
     const data = registerSchema.parse(req.body);
     const email = data.email.toLowerCase();
@@ -68,6 +83,7 @@ authRouter.post(
 
 authRouter.post(
   "/login",
+  authLimiter,
   asyncHandler(async (req, res) => {
     const data = loginSchema.parse(req.body);
     const email = data.email.toLowerCase();
